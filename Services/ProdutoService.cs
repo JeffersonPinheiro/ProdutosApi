@@ -20,6 +20,21 @@ namespace ProdutosApi.Services
         public Task<Produto> ObterProdutoPorId(int id)
         {
             return _produtoRepository.ObterProdutoPorIdAsync(id);
-        } 
+        }
+
+        public Task<IEnumerable<Produto>> AdicionarProdutoAsync(Produto produto)
+        {
+            return _produtoRepository.AdicionarProdutoAsync(produto);
+        }
+
+        public Task<Produto?> ExcluirProduto(int id)
+        {
+            return _produtoRepository.ExcluirProduto(id);
+        }
+
+        public Task<IEnumerable<Produto>> AtualizarProdutoAsync(Produto produto)
+        {
+            return _produtoRepository.AtualizarProdutoAsync(produto);
+        }
     }
 }

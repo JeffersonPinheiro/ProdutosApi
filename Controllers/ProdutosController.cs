@@ -33,25 +33,47 @@ namespace ProdutosApi.Controllers
             return Ok(produto);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Post([FromBody] Produto produto)
-        //{
-        //    // Implementar lógica para adicionar um novo produto
-        //    return CreatedAtAction(nameof(Get), new { id = produto.Id }, produto);
-        //}
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Produto produto)
+        {
+            var produtoNovo = await _service.AdicionarProdutoAsync(produto);
+            if (produto == null)
+            {
+                return BadRequest("Erro ao adicionar o produto.");
+            }
+            return produtoNovo.Any() ? Ok(produtoNovo) : BadRequest("Produto já existe na base de dados.");
+        }
 
-        //[HttpPut]
-        //public async Task<IActionResult> Put([FromBody] Produto produto)
-        //{
-        //    // Implementar lógica para atualizar um produto existente
-        //    var produtoExistente = await
-        //}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var existeProduto = await _service.ObterProdutoPorId(id);
+            if (existeProduto == null)
+            {
+                return NotFound("Este produto não existe na base de dados.");
+            }
+            else if (existeProduto != null)
+            {
+                var produtoExcluido = await _service.ExcluirProduto(id);
+                return produtoExcluido != null ? Ok(produtoExcluido) : BadRequest("Erro ao excluir o produto.");
+            }
+            return Ok("Produto excluído com sucesso.");
+        }
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    // Implementar lógica para excluir um produto
-        //    return NoContent();
-        //}
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] Produto produto)
+        {
+            var existeProduto = await _service.ObterProdutoPorId(produto.Id);
+            if (existeProduto == null)
+            {
+                return NotFound("Este produto não existe na base de dados.");
+            }
+            else if (existeProduto != null)
+            {
+                var produtoAtualizado = await _service.AtualizarProdutoAsync(produto);
+                return produtoAtualizado.Any() ? Ok(produtoAtualizado) : BadRequest("Erro ao atualizar o produto.");
+            }
+            return Ok("Produto atualizado com sucesso.");
+        }
     }
 }
